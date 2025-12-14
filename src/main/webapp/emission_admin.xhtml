@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>CO₂-Daten – Adminbereich</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+
+<f:metadata>
+    <f:viewAction action="#{securityBean.checkAdminAccess}"/>
+</f:metadata>
+
+<h:body styleClass="page">
+    <div class="page-container">
+
+        <header class="page-header">
+            <div class="header-bar">
+                <div class="header-text">
+                    <h1>Like Hero To Zero – Admin</h1>
+                    <div class="subtitle">
+                        CO₂-Emissionsdaten verwalten und neue Datensätze erfassen.
+                    </div>
+
+                    <h:form styleClass="header-actions">
+                        <h:commandButton value="Logout" action="#{securityBean.logout}" styleClass="btn btn-secondary" />
+                    </h:form>
+                </div>
+            </div>
+        </header>
+
+        <br/>
+
+        <div class="card accent-grey">
+            <div class="card-header">Navigation</div>
+            <div class="card-subtitle">
+                Wechsle schnell zwischen Adminbereich und öffentlicher Ansicht.
+            </div>
+            <h:form>
+                <h:link value="Zur öffentlichen CO₂-Ansicht" outcome="co2" styleClass="btn btn-secondary"/>
+            </h:form>
+        </div>
+
+        <h:form styleClass="card card-table accent-green">
+            <div class="card-header">Bestehende Emissionsdatensätze</div>
+            <div class="card-subtitle">
+                Bestehende Werte anpassen oder Einträge löschen.
+            </div>
+
+            <h:dataTable value="#{emissionAdmin.emissions}" var="e" styleClass="table">
+
+                <h:column>
+                    <f:facet name="header">Land</f:facet>
+                    #{e.country.name}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Jahr</f:facet>
+                    <h:inputText value="#{e.year}" size="4"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">CO₂ (kt)</f:facet>
+                    <h:outputText value="#{e.co2Kilotons}">
+                        <f:convertNumber groupingUsed="true" locale="de_DE" maxFractionDigits="0"/>
+                    </h:outputText>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Quelle</f:facet>
+                    <h:inputText value="#{e.source}" size="20"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Aktion</f:facet>
+                    <h:commandButton value="Löschen" action="#{emissionAdmin.delete(e)}" styleClass="btn btn-danger" onclick="return confirm('Wirklich löschen?');"/>
+                </h:column>
+
+            </h:dataTable>
+        </h:form>
+
+        <h:form styleClass="card accent-green">
+            <div class="card-header">Neuen Datensatz hinzufügen</div>
+            <div class="card-subtitle">
+                Ergänze neue CO₂-Daten für ein Land und ein Jahr.
+            </div>
+
+            <h:panelGrid columns="2" columnClasses="label-col,value-col">
+                <h:outputLabel for="country" value="Land:"/>
+                <h:selectOneMenu id="country" value="#{emissionAdmin.newCountryId}">
+                    <f:selectItem itemLabel="-- bitte wählen --" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{emissionAdmin.countries}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}"/>
+                </h:selectOneMenu>
+
+                <h:outputLabel for="year" value="Jahr:"/>
+                <h:inputText id="year" value="#{emissionAdmin.newEmission.year}" size="4"/>
+
+                <h:outputLabel for="co2" value="CO₂ (kt):"/>
+                <h:inputText id="co2" value="#{emissionAdmin.newEmission.co2Kilotons}" size="8"/>
+
+                <h:outputLabel for="source" value="Quelle:"/>
+                <h:inputText id="source" value="#{emissionAdmin.newEmission.source}" size="20"/>
+            </h:panelGrid>
+
+            <div class="actions">
+                <h:commandButton value="Hinzufügen" action="#{emissionAdmin.addNew}" styleClass="btn btn-primary"/>
+            </div>
+
+        </h:form>
+
+        <br/>
+
+    </div>
+
+</h:body>
+</html>

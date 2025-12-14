@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>CO₂-Emissionen nach Land</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+
+<f:metadata>
+    <f:viewAction action="#{securityBean.checkUserAccess}" />
+</f:metadata>
+
+<h:body styleClass="page">
+    <div class="page-container">
+
+        <header class="page-header">
+            <h1>Like Hero To Zero</h1>
+            <div class="subtitle">
+                CO₂-Ausstoß nach Staatsbürgerschaft anzeigen
+            </div>
+        </header>
+
+        <h:form styleClass="card">
+            <div class="card-header">Mein Land auswählen</div>
+            <div class="card-subtitle">
+                Wähle die Staatsbürgerschaft aus, für die du den letzten CO₂-Wert sehen möchtest.
+            </div>
+
+            <h:panelGrid columns="2" columnClasses="label-col,value-col">
+                <h:outputLabel for="country" value="Staatsbürgerschaft:" />
+                <h:selectOneMenu id="country" value="#{emissions.selectedCountryId}">
+                    <f:selectItem itemLabel="-- bitte wählen --" itemValue="#{null}" noSelectionOption="true" />
+                    <f:selectItems value="#{emissions.countries}" var="c" itemLabel="#{c.name}" itemValue="#{c.id}" />
+                </h:selectOneMenu>
+            </h:panelGrid>
+
+            <h:form id="actionsForm" style="display:flex; align-items:center;">
+
+                <h:commandButton value="CO₂-Daten anzeigen" action="#{emissions.loadEmissions}" styleClass="btn btn-primary" style="margin-right:12px;" />
+
+                <h:link outcome="login" value="Zum Login (Admin-Bereich)" styleClass="btn btn-secondary" style="margin-right:12px;" />
+
+                <h:commandButton value="Logout" action="#{securityBean.logout}" styleClass="btn btn-secondary" />
+            </h:form>
+
+        </h:form>
+
+        <h:panelGroup rendered="#{not empty emissions.latest}">
+            <div class="card">
+                <div class="section-title">
+                    Aktuellster CO₂-Datensatz
+                    <span class="badge">neuester Stand</span>
+                </div>
+
+                <p><b>Jahr:</b> #{emissions.latest.year}</p>
+                <p>
+                    <b>CO₂-Ausstoß:</b>
+                    <h:outputText value="#{emissions.latest.co2Kilotons}">
+                        <f:convertNumber groupingUsed="true" locale="de_DE" maxFractionDigits="0" />
+                    </h:outputText>
+                    kt
+                </p>
+                <p><b>Quelle:</b> #{emissions.latest.source}</p>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{not empty emissions.allForCountry}">
+            <div class="card">
+                <div class="section-title">Verlauf aller vorhandenen Jahre</div>
+
+                <h:dataTable value="#{emissions.allForCountry}" var="e" styleClass="table">
+
+                    <h:column>
+                        <f:facet name="header">Jahr</f:facet>
+                        #{e.year}
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">CO₂ (kt)</f:facet>
+                        <h:outputText value="#{e.co2Kilotons}">
+                            <f:convertNumber groupingUsed="true" locale="de_DE" maxFractionDigits="0" />
+                        </h:outputText>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Quelle</f:facet>
+                        #{e.source}
+                    </h:column>
+                </h:dataTable>
+            </div>
+        </h:panelGroup>
+
+    </div>
+</h:body>
+</html>
