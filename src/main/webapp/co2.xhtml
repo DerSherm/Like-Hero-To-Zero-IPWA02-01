@@ -50,14 +50,14 @@
         <h:panelGroup rendered="#{not empty emissions.latest}">
             <div class="card">
                 <div class="section-title">
-                    Aktuellster CO₂-Datensatz
-                    <span class="badge">neuester Stand</span>
+                    Neuster CO₂-Datensatz
+                    <span class="badge">letztes verfügbares Jahr</span>
                 </div>
 
                 <p><b>Jahr:</b> #{emissions.latest.year}</p>
                 <p>
                     <b>CO₂-Ausstoß:</b>
-                    <h:outputText value="#{emissions.latest.co2Kilotons}">
+                    <h:outputText value=" #{emissions.latest.co2Kilotons}">
                         <f:convertNumber groupingUsed="true" locale="de_DE" maxFractionDigits="0" />
                     </h:outputText>
                     kt
@@ -91,6 +91,8 @@
                 </h:dataTable>
             </div>
         </h:panelGroup>
+
+        <br/>
 
     </div>
 </h:body>
